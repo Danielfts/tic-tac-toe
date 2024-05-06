@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import "./App.css";
 
@@ -30,9 +31,7 @@ function calculateWinner (squares) {
   return null;
 }
 
-export default function Board() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+function Board({xIsNext, squares, onPlay}) {
 
   const winner = calculateWinner(squares);
   let status;
@@ -48,8 +47,7 @@ export default function Board() {
     }
     const nextSquares = squares.slice();
     nextSquares[i] = xIsNext ? "X" : "O";
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    onPlay(nextSquares);
   }
   return (
     <>
@@ -71,4 +69,27 @@ export default function Board() {
       </div>
     </>
   );
+}
+
+export default function Game () {
+  const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHisotry] = useState([Array(9).fill(null)])
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares) {
+    setHisotry([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+  return (
+    <>
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+      </div>
+      <div className="game-info">
+        <ol>{/* TODO */}</ol>
+      </div>
+    </div>
+    </>
+  )
 }
